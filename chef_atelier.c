@@ -1,3 +1,1 @@
-chef_atelier(int numero_ordre, int nb_1, int nb_2, int nb_3, int nb_4){
-    
-}
+chef_atelier(int numero_ordre, int nb_1, int nb_2, int nb_3, int nb_4); //faut faire un main et verifier les args

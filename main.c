@@ -4,6 +4,8 @@
 
 int main(int argc, char const *argv[]){
 
+    pid_t p ;
+
     /*------------Vérification des arguments---------------*/
 
     if (argc<6){
@@ -34,23 +36,27 @@ int main(int argc, char const *argv[]){
     /*------------Lancer les chefs d'ateliers-------------*/
 
     for(int i=0; i<nb_chefs; i++){
-        //numéro d'ordre = i ?
-        chef_atelier(i, nb_1, nb_2, nb_3, nb_4);
+        p = fork();
+        if(p==0) //fils
+			execl("./chef_atelier","./chef_atelier",i,nb_1,nb_2,nb_3,nb_4,NULL);
+            break;
+        }
     }
 
     /*--------------Lancer les mécaniciens---------------*/
     for(int i=0; i<nb_mecaniciens; i++){
-        //numéro d'ordre = i ?
-        mecanicien(i);
+        p = fork();
+        if(p==0){ //fils
+            execl("./mecanicien", "./mecanicien",i,NULL);
+            break;
+        }
     }
 
-    /*--------------Lancer les mécaniciens---------------*/
+    /*--------------Lancer les clients---------------*/
     int inconnu; //on en lance combien ? :/
     for(int i=0; i<inconnu; i++){
-        mecanicien(nb_chefs, cles_chef);
+        execl("./client","./client",nb_chefs,cles_chef,NULL);
     }
-
-
     
     exit(0);
 }
