@@ -1,6 +1,21 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
 #include <sys/msg.h>
+#include <signal.h>
+
+//Fonction du prof pour arreter quand recoit message SIGINT
+int set_signal_handler(int signo, void (*handler)(int)) {
+	struct sigaction sa;
+	sa.sa_handler = handler;    // call `handler` on signal
+	sigemptyset(&sa.sa_mask);   // don't block other signals in handler
+	sa.sa_flags = 0 ;            //  don't restart system calls
+	return sigaction(signo, &sa, NULL);
+}
 
 int main(int argc, char const *argv[]){
 
@@ -13,12 +28,12 @@ int main(int argc, char const *argv[]){
         exit(1);
     }
 
-    int nb_chefs = strtol(argv[1]);
-    int nb_mecaniciens = strtol(argv[2]);
-    int nb_1 = strtol(argv[3]);
-    int nb_2 = strtol(argv[4]);
-    int nb_3 = strtol(argv[5]);
-    int nb_4 = strtol(argv[6]);
+    int nb_chefs = strtol(argv[1], &argv[2], 10);
+    int nb_mecaniciens = strtol(argv[2], &argv[3], 10);
+    int nb_1 = strtol(argv[3], &argv[4], 10);
+    int nb_2 = strtol(argv[4], &argv[5], 10);
+    int nb_3 = strtol(argv[5], &argv[6], 10);
+    int nb_4 = strtol(argv[6], &argv[7], 10);
 
     if(nb_chefs<2){
         fprintf(stderr, "Attention, il faut au moins deux chefs d'ateliers\n");
