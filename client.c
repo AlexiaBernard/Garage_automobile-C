@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/msg.h>
+#include "types.h"
 
 int main(int argc, char const *argv[]){
     /*------------Vérification des arguments---------------*/
@@ -11,6 +12,6 @@ int main(int argc, char const *argv[]){
         exit(1);
     }
 
-    int nb_chefs = strtol(argv[1], &argv[2], 10);
-    key_t clefs_chefs = strtol(argv[2], &argv[3], 10);
+    int nb_chefs = (int)strtol(argv[1], NULL, 0);
+    key_t clefs_chefs = (int)strtol(argv[2], NULL, 0);
 }

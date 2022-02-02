@@ -1,4 +1,5 @@
 typedef struct {
+	long type;
 	int duree;
 	int nb_1;
     int nb_2;
@@ -16,7 +17,8 @@ typedef struct {
 } reponse_t;
 
 
-#define FICHIER_CLE_CHEFS "cle.chefs"
+#define FICHIER_CLE "cle.chefs"
+#define TAILLE_REQUETE_CHEF sizeof(requete_chef)-sizeof(long int)
 
 /* Couleurs */
 #define couleur(param) fprintf(stdout,"\033[%sm",param)
