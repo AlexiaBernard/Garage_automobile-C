@@ -15,4 +15,8 @@ int main(int argc, char const *argv[]){
     int nb_2 = (int)strtol(argv[3], NULL, 0);
     int nb_3 = (int)strtol(argv[4], NULL, 0);
     int nb_4 = (int)strtol(argv[5], NULL, 0);
+
+    couleur(VERT);
+    fprintf(stdout, "Le chef d'atelier n°%d vient d'arriver au garage.\n", numero_ordre);
+    couleur(REINIT);
 }

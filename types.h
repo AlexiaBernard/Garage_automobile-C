@@ -6,6 +6,7 @@ typedef struct {
     int nb_3;
     int nb_4;
 	pid_t chef;
+	pid_t client;
 } requete_chef;
 
 typedef struct {
@@ -13,12 +14,22 @@ typedef struct {
 } requete_client;
 
 typedef struct {
+	long type
 	int resultat; //pas sûre du type ici
-} reponse_t;
+	pid_t client;
+} reponse_mecanicien;
+
+typedef struct {
+	long type
+	int resultat; //pas sûre du type ici
+} reponse_chef;
 
 
 #define FICHIER_CLE "cle.chefs"
 #define TAILLE_REQUETE_CHEF sizeof(requete_chef)-sizeof(long int)
+#define TAILLE_REQUETE_CLIENT sizeof(requete_client)-sizeof(long int)
+#define TAILLE_REPONSE_MECANICIEN sizeof(reponse_mecanicien)-sizeof(long int)
+#define TAILLE_REPONSE_CHEF sizeof(reponse_chef)-sizeof(long int)
 
 /* Couleurs */
 #define couleur(param) fprintf(stdout,"\033[%sm",param)

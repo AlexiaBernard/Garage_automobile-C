@@ -14,4 +14,9 @@ int main(int argc, char const *argv[]){
 
     int nb_chefs = (int)strtol(argv[1], NULL, 0);
     key_t clefs_chefs = (int)strtol(argv[2], NULL, 0);
+
+/*
+    couleur(ROUGE);
+    fprintf(stdout, "Un client vient d'arriver au garage.\n");
+    couleur(REINIT);*/
 }
