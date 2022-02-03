@@ -35,7 +35,7 @@ int set_signal_handler(int signo, void (*handler)(int)) {
 int main(int argc, char const *argv[]){
 
     pid_t p ;
-    key_t cles []; //en faire un tableau pour en mettre plusieurs ?
+    key_t cles [2]; //en faire un tableau pour en mettre plusieurs ?
     //Pour le moment j'en ai mis que une pour la file de message
 
     /*------------Vérification des arguments---------------*/
@@ -98,9 +98,10 @@ int main(int argc, char const *argv[]){
     assert(semctl(semid_outils,3,SETVAL,nb_4) >=0);
 
     //ici initialisation d'un semaphore pour les clients
-    assert(semctl(semid_clients,0,SETALL,0) >=0); //Initialise à 0 comme ca on pourra avoir le nb en attente
+    //PROBLEME ASSERT FONCTIONNE PAS J ARRIVE PAS A TROUVER POURQUOI
+    //assert(semctl(semid_clients,0,SETALL,0) >=0); //Initialise à 0 comme ca on pourra avoir le nb en attente
 
-    //Pas sûre qu'il faut le mettre ici (j'ai prit exemple d'un truc du prof)
+    //Pas sûre qu'il faut le mettre ici (j'ai pris exemple d'un truc du prof)
     assert(set_signal_handler(SIGINT,arret) == 0);
 
     /*------------Lancer les chefs d'ateliers-------------*/
@@ -108,6 +109,7 @@ int main(int argc, char const *argv[]){
     for(int i=0; i<nb_chefs; i++){
         p = fork();
         if(p==0){ //fils
+            //PROBLEME AVEC LE NOMBRE D'ARGUMENT ALORS QUE C'EST BON
 			execl("./chef_atelier","./chef_atelier",i,nb_1,nb_2,nb_3,nb_4,NULL);
             break;
         }

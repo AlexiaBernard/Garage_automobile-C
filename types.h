@@ -14,13 +14,13 @@ typedef struct {
 } requete_client;
 
 typedef struct {
-	long type
+	long type;
 	int resultat; //pas sûre du type ici
 	pid_t client;
 } reponse_mecanicien;
 
 typedef struct {
-	long type
+	long type;
 	int resultat; //pas sûre du type ici
 } reponse_chef;
 
