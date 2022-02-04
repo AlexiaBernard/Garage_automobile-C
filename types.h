@@ -10,8 +10,9 @@ typedef struct {
 } requete_chef;
 
 typedef struct {
-    pid_t client;
-} requete_client;
+	long type;
+	pid_t client;
+} requete_client; //Finalement je pense que le client envoie un siganl au chef et inversement donc pas besoin de ca
 
 typedef struct {
 	long type;
@@ -22,7 +23,7 @@ typedef struct {
 typedef struct {
 	long type;
 	int resultat; //pas sûre du type ici
-} reponse_chef;
+} reponse_chef; //ni de ca ==> signal
 
 
 #define FICHIER_CLE "cle.chefs"

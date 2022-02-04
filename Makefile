@@ -1,18 +1,18 @@
 CC = gcc -Wall 
 
-all : main client chef_atelier #mecanicien
+all : main client chef_atelier mecanicien
 
 client : client.c types.h
-	$(CC) client.c -o client
+	$(CC) -o client client.c 
 
 chef_atelier : chef_atelier.c types.h
-	$(CC) chef_atelier.c -o chef_atelier
+	$(CC) -o chef_atelier chef_atelier.c
 
-#mecanicien : mecanicien.c types.h
-	#$(CC) mecanicien.c -o mecanicien
+mecanicien : mecanicien.c types.h
+	$(CC) -o mecanicien mecanicien.c 
 
 main : main.c types.h
-	$(CC) main.c -o main
+	$(CC) -o main main.c
 	touch cle.chefs
 
 clean :

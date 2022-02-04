@@ -33,7 +33,6 @@ int set_signal_handler(int signo, void (*handler)(int)) {
 }
 
 int main(int argc, char const *argv[]){
-
     pid_t p ;
     key_t cles [2]; //en faire un tableau pour en mettre plusieurs ?
     //Pour le moment j'en ai mis que une pour la file de message
@@ -75,18 +74,18 @@ int main(int argc, char const *argv[]){
 
             /*------Création-------*/
 
-    file_mess = msgget(cles[0], IPC_CREAT|0600);
+    file_mess = msgget(cles[0], IPC_CREAT|0666);
     assert(file_mess != -1);
 
         /*-----------Sémaphores--------------*/
 
                 /*------Création-------*/
 
-    semid_outils = semget(cles[0], 4 ,IPC_CREAT|0600);
+    semid_outils = semget(cles[0], 4 ,IPC_CREAT|0666);
     //pour le moment j'ai mis 4 semaphores pour le nb d'outils
     assert(semid_outils != -1);
 
-    semid_clients = semget(cles[1], nb_chefs ,IPC_CREAT|0600);
+    semid_clients = semget(cles[1], nb_chefs ,IPC_CREAT|0666);
     //pour le moment j'ai mis nb_chefs semaphores
     assert(semid_clients != -1);
 
@@ -107,29 +106,51 @@ int main(int argc, char const *argv[]){
     /*------------Lancer les chefs d'ateliers-------------*/
 
     for(int i=0; i<nb_chefs; i++){
+        
+        char argv1[2];
+        char argv2[2];
+        char argv3[2];
+        char argv4[2];
+        char argv5[2];
+
+        snprintf(argv1, sizeof(int), "%d", i);
+        snprintf(argv2, sizeof(int), "%d", nb_1);
+        snprintf(argv3, sizeof(int), "%d", nb_2);
+        snprintf(argv4, sizeof(int), "%d", nb_3);
+        snprintf(argv5, sizeof(int), "%d", nb_4);
+
         p = fork();
         if(p==0){ //fils
-            //PROBLEME AVEC LE NOMBRE D'ARGUMENT ALORS QUE C'EST BON
-			execl("./chef_atelier","./chef_atelier",i,nb_1,nb_2,nb_3,nb_4,NULL);
+			execl("./chef_atelier", "./chef_atelier", argv1, argv2, argv3, argv4, argv5, NULL);
             break;
         }
     }
 
     /*--------------Lancer les mécaniciens---------------*/
-    for(int i=0; i<nb_mecaniciens; i++){
+    for(int j=0; j<nb_mecaniciens; j++){
+        char argv1[2];
+        snprintf(argv1, sizeof(int), "%d", j);
         p = fork();
         if(p==0){ //fils
-            execl("./mecanicien", "./mecanicien",i,NULL);
+            execl("./mecanicien", "./mecanicien",&argv1,NULL);
             break;
         }
     }
 
+    
+
     /*--------------Lancer les clients---------------*/
+    /*
     int inconnu = 2; //on en lance combien ? :/
     //Ici il faut mettre un temporisation pour les creer
-    for(int i=0; i<inconnu; i++){
-        execl("./client","./client",nb_chefs,cles,NULL);
+    char argv[cles.length()+1];
+    char argv[0] = (nb_chefs+'0');
+    for (int i=1; i<cles.length(); i++){
+        argv[i] =  cles[i];
     }
+    for(int i=0; i<inconnu; i++){
+        execv("./client",&argv);
+    }*/
     
     exit(0);
 }

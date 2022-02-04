@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/msg.h>
 #include <sys/sem.h>
 #include <assert.h>
@@ -17,10 +18,8 @@ int main(int argc, char const *argv[]){
     key_t cle ;
     int numero_ordre;
     ssize_t nb_lus, nb_envoi;
-    struct requete_chef requete;
-    struct reponse_mecanicien reponse;
-    //struct sembuf p[];
-    //struct sembuf v[];
+    requete_chef requete;
+    reponse_mecanicien reponse;
     int nb_1, nb_2, nb_3, nb_4;
 
     /*------------Vérification des arguments---------------*/
@@ -83,7 +82,7 @@ int main(int argc, char const *argv[]){
         fprintf(stdout, "Le mécanicien n°%d commence à travailler : durée du travail %d.\n",numero_ordre, requete.duree);
         couleur(REINIT);
 
-        sleep(requete.duree);
+        usleep(requete.duree);
 
         couleur(BLEU);
         fprintf(stdout, "Le mécanicien n°%d a fini de travailler.\n",numero_ordre);
