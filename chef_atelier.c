@@ -66,7 +66,7 @@ int main(int argc, char const *argv[]){
         fprintf(stdout, "Le chef d'atelier n°%d vient de recevoir une requête du client %d.\n", numero_ordre, req_client.client);
         couleur(REINIT);
 
-        /* Traitement de la requête */
+        /* Traitement de la requête du client*/
         couleur(JAUNE);
         fprintf(stdout, "Le chef d'atelier n°%d prépare le travail des mécaniciens.\n",numero_ordre);
         couleur(REINIT);
@@ -82,7 +82,7 @@ int main(int argc, char const *argv[]){
 
         /* Envoi du travail au mecanicien */
         couleur(JAUNE);
-        fprintf(stdout, "Le chef d'atelier n°%d envoi le travail aux mécaniciens.\n",numero_ordre);
+        fprintf(stdout, "Le chef d'atelier n°%d envoie le travail aux mécaniciens.\n",numero_ordre);
         couleur(REINIT);
         nb_envoi = msgsnd(file_mess_mecanicien, &req_chef, TAILLE_REQUETE_CHEF, 0);
 
@@ -96,15 +96,16 @@ int main(int argc, char const *argv[]){
         couleur(JAUNE);
         fprintf(stdout, "Le chef d'atelier n°%d vient de recevoir la réponse du travail du client %d.\n", numero_ordre, rep_mecanicien.client);
 
-        /* Traitement de la reponse */
+        /* Traitement de la reponse du mecanicien*/
 
         rep_chef.type = rep_mecanicien.client;
         rep_chef.resultat = rep_mecanicien.resultat;
 
-        /* Envoi du travail au mecanicien */
+        /* Envoi du travail au client */
         couleur(JAUNE);
         fprintf(stdout, "Le chef d'atelier n°%d envoi le résultat du travail au client %d.\n",numero_ordre, rep_chef.type);
         couleur(REINIT);
+        
         nb_envoi = msgsnd(file_mess_client, &rep_chef, TAILLE_REPONSE_CHEF, 0);
 
         assert(nb_envoi != -1);

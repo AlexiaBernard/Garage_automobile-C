@@ -97,6 +97,10 @@ int main(int argc, char const *argv[]){
 
 
         /* Envoi de la réponse */
+        couleur(BLEU);
+        fprintf(stdout, "Le mécanicien n°%d envoie le résultat de son travail au chef n°%d.\n",numero_ordre, requete.chef);
+        fprintf(stdout, "\t Résultat : %d.\n",reponse.resultat);
+        couleur(REINIT);
         nb_envoi = msgsnd(file_mess, &reponse, TAILLE_REPONSE_MECANICIEN, 0);
 
         assert(nb_envoi != -1);
