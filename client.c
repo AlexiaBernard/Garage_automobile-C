@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/msg.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <assert.h>
 #include "types.h"
 
 int file_mess;
@@ -8,14 +11,13 @@ int semid;
 
 int main(int argc, char const *argv[]){
 
-    int nb_envoi, nb_recu;
+    int nb_envoi,nb_recu,nb_lus;
     requete_client requete;
     reponse_chef reponse;
 
     /*------------Vérification des arguments---------------*/
 
-    if (argc < 2)
-    {
+    if (argc < 2){
         fprintf(stderr, "Attention, un client a besoin de 2 arguments : nb_chefs cles_chefs\n");
         exit(1);
     }
@@ -33,17 +35,17 @@ int main(int argc, char const *argv[]){
     assert(file_mess != -1);
 
     /*--------------Sémarphores--------------*/
-    semid = semget(cle,4,0);
+    semid = shmget(cle,4,0);
 	assert(semid >= 0);
 
     //se mettre en attente du chef d'atelier le moins occupé (moyen à définir par vous)
     //PROBLEME : Comment faire pour récupérer la "liste d'attente" (=la valeur d'un semaphore)
     int num_chef = 0; //revient au numéro du chef choisi
 
-    struct sembuf p[] = {{num_chef,-1,0}};
-    struct sembuf v[] = {{num_chef,+1,0}};
+    //struct sembuf p[] = {{num_chef,-1,0}};
+    //struct sembuf v[] = {{num_chef,+1,0}};
 
-    semop(semid,p,1);
+    //semop(semid,p,1);
 
     /* Envoi du travail au chef d'atelier */
     couleur(ROUGE);
@@ -67,7 +69,7 @@ int main(int argc, char const *argv[]){
     fprintf(stdout, "\t Résultat obtenu : %d.\n", reponse.resultat);
     couleur(REINIT);
 
-    semop(semid,v,1);
+    //semop(semid,v,1);
 
     exit(0);
 

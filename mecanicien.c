@@ -4,6 +4,7 @@
 #include <sys/msg.h>
 #include <sys/sem.h>
 #include <assert.h>
+#include <time.h>
 #include "types.h"
 
 int file_mess;
@@ -75,6 +76,7 @@ int main(int argc, char const *argv[]){
         struct sembuf p[] = { {0,pnb_1,0}, {1,pnb_2,0}, {2,pnb_3,0}, {3,pnb_4,0} };
         struct sembuf v[] = { {0,vnb_1,0}, {1,vnb_2,0}, {2,vnb_3,0}, {3,vnb_4,0} };
 
+        /* Verrou des outils */
         semop(semid,p,4);
 
         /* traitement de la requête */
@@ -90,9 +92,10 @@ int main(int argc, char const *argv[]){
 
         /* Libération des outils */
         semop(semid,v,4);
-
+        
+        srand(time(NULL));
         reponse.type = requete.chef;
-        reponse.resultat = srand()%100;
+        reponse.resultat = rand()%100;
         reponse.client = requete.client;
 
 

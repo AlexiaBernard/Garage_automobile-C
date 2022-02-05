@@ -9,6 +9,7 @@
 #include <sys/sem.h>
 #include <signal.h>
 #include <assert.h>
+#include <time.h>
 #include "types.h"
 
 int file_mess_mecanicien;
@@ -79,7 +80,7 @@ int main(int argc, char const *argv[]){
     assert(file_mess_mecanicien != -1);
 
     file_mess_clients = msgget(cle_client, IPC_CREAT|0666);
-    assert(file_mess_client != -1);
+    assert(file_mess_clients != -1);
 
         /*-----------Sémaphores--------------*/
 
@@ -130,6 +131,8 @@ int main(int argc, char const *argv[]){
         }
     }
 
+    sleep(1);
+
     /*--------------Lancer les mécaniciens---------------*/
     for(int j=0; j<nb_mecaniciens; j++){
         char argv1[2];
@@ -141,21 +144,30 @@ int main(int argc, char const *argv[]){
         }
     }
 
-    
+    sleep(1);
 
     /*--------------Lancer les clients---------------*/
-    /*
-    ATTENTION les clients ont besoin uniquement de la clé contenu dans cle_client
-    int inconnu = 2; //on en lance combien ? :/
+    
+    //ATTENTION les clients ont besoin uniquement de la clé contenu dans cle_client
     //Ici il faut mettre un temporisation pour les creer
-    char argv[cles.length()+1];
-    char argv[0] = (nb_chefs+'0');
-    for (int i=1; i<cles.length(); i++){
-        argv[i] =  cles[i];
-    }
+    
+    int duree;
+    srand(time(NULL));
+    
+    int inconnu = 2; //pour l'instant on choisi et on pourra mettre un nombre aléatoire
+    char argv1[2];
+    snprintf(argv1, sizeof(int), "%d", nb_chefs);
+
     for(int i=0; i<inconnu; i++){
-        execv("./client",&argv);
-    }*/
+        p = fork();
+        if(p==0){ //fils
+            execl("./client", "./client", argv1,cle_client,NULL);
+            break;
+        }
+        duree = rand()%10;
+        sleep(duree);
+        printf("%s\n",argv1);
+    }
     
     exit(0);
 }

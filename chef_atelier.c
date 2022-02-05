@@ -4,6 +4,7 @@
 #include <sys/msg.h>
 #include <sys/sem.h>
 #include <assert.h>
+#include <time.h>
 #include "types.h"
 
 int file_mess_client;
@@ -17,10 +18,10 @@ int main(int argc, char const *argv[]){
     int mecanicien;
     ssize_t nb_lus, nb_envoi;
     requete_client req_client;
-    requete_chef req_chef
+    requete_chef req_chef;
 
     reponse_chef rep_chef;
-    reponse_chef rep_mecanicien;
+    reponse_mecanicien rep_mecanicien;
 
     /*------------Vérification des arguments---------------*/
     if (argc<5){
@@ -71,12 +72,13 @@ int main(int argc, char const *argv[]){
         fprintf(stdout, "Le chef d'atelier n°%d prépare le travail des mécaniciens.\n",numero_ordre);
         couleur(REINIT);
 
+        srand(time(NULL));
         req_chef.type = 1;
-        req_chef.duree = srand()%30;
-        req_chef.nb_1 = srand()%nb_1;
-        req_chef.nb_2 = srand()%nb_2;
-        req_chef.nb_3 = srand()%nb_3;
-        req_chef.nb_4 = srand()%nb_4;
+        req_chef.duree = rand()%30;
+        req_chef.nb_1 = rand()%nb_1;
+        req_chef.nb_2 = rand()%nb_2;
+        req_chef.nb_3 = rand()%nb_3;
+        req_chef.nb_4 = rand()%nb_4;
         req_chef.chef = getpid();
         req_chef.client = req_client.client;
 
@@ -103,7 +105,7 @@ int main(int argc, char const *argv[]){
 
         /* Envoi du travail au client */
         couleur(JAUNE);
-        fprintf(stdout, "Le chef d'atelier n°%d envoi le résultat du travail au client %d.\n",numero_ordre, rep_chef.type);
+        fprintf(stdout, "Le chef d'atelier n°%d envoi le résultat du travail au client %ld.\n",numero_ordre, rep_chef.type);
         couleur(REINIT);
         
         nb_envoi = msgsnd(file_mess_client, &rep_chef, TAILLE_REPONSE_CHEF, 0);
