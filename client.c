@@ -67,6 +67,8 @@ int main(int argc, char const *argv[]){
     fprintf(stdout, "\t Résultat obtenu : %d.\n", reponse.resultat);
     couleur(REINIT);
 
+    semop(semid,v,1);
+
     exit(0);
 
 }
