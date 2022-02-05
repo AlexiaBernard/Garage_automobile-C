@@ -53,7 +53,7 @@ int main(int argc, char const *argv[]){
 
     while(1){
         /* mecanicien attend des requetes, de type numero_ordre :        */
-        nb_lus = msgrcv(file_mess,(void *) &requete, TAILLE_REQUETE_CHEF, numero_ordre, 0);
+        nb_lus = msgrcv(file_mess,(void *) &requete, TAILLE_REQUETE_CHEF, 0, 0);
 
         assert(nb_lus != -1);
 
@@ -92,7 +92,7 @@ int main(int argc, char const *argv[]){
         semop(semid,v,4);
 
         reponse.type = requete.chef;
-        reponse.resultat = 10;
+        reponse.resultat = srand()%100;
         reponse.client = requete.client;
 
 

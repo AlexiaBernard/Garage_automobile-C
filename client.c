@@ -20,5 +20,5 @@ int main(int argc, char const *argv[]){
     fprintf(stdout, "Un client vient d'arriver au garage.\n");
     couleur(REINIT);*/
 
-    //Signal entre client et chef ? 
+
 }

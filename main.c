@@ -11,14 +11,15 @@
 #include <assert.h>
 #include "types.h"
 
-int file_mess; /* ID de la file, necessairement global pour pouvoir la supprimer a la terminaison */
-//Peut être en faire un tableau s'il en faut plusieurs
+int file_mess_mecanicien;
+int file_mess_clients; 
 int semid_outils;
 int semid_clients;
 
 void arret(int s){
     /* Arret du serveur en detruisant la file de message */
-    assert(msgctl(file_mess, IPC_RMID, NULL) >= 0);
+    assert(msgctl(file_mess_mecanicien, IPC_RMID, NULL) >= 0);
+    assert(msgctl(file_mess_clients, IPC_RMID, NULL) >= 0);
     assert(semctl(semid_outils,0,IPC_RMID) >= 0);
     assert(semctl(semid_clients,0,IPC_RMID) >= 0);
 }
@@ -34,8 +35,8 @@ int set_signal_handler(int signo, void (*handler)(int)) {
 
 int main(int argc, char const *argv[]){
     pid_t p ;
-    key_t cles [2]; //en faire un tableau pour en mettre plusieurs ?
-    //Pour le moment j'en ai mis que une pour la file de message
+    key_t cle_client;
+    key_t cle_mecanicien;
 
     /*------------Vérification des arguments---------------*/
 
@@ -64,28 +65,31 @@ int main(int argc, char const *argv[]){
     /*-----------Création des IPC nécessaire--------------*/
 
         /*------Calcul des clés-------*/
-    cles[0] = ftok(FICHIER_CLE,'a');
-    assert(cles[0] != -1);
+    cle_mecanicien = ftok(FICHIER_CLE,'a');
+    assert(cle_mecanicien != -1);
 
-    cles[1] = ftok(FICHIER_CLE,'b');
-    assert(cles[1] != -1);
+    cle_client = ftok(FICHIER_CLE,'b');
+    assert(cle_client != -1);
 
         /*-----------La file de message--------------*/
 
             /*------Création-------*/
 
-    file_mess = msgget(cles[0], IPC_CREAT|0666);
-    assert(file_mess != -1);
+    file_mess_mecanicien = msgget(cle_mecanicien, IPC_CREAT|0666);
+    assert(file_mess_mecanicien != -1);
+
+    file_mess_clients = msgget(cle_client, IPC_CREAT|0666);
+    assert(file_mess_client != -1);
 
         /*-----------Sémaphores--------------*/
 
                 /*------Création-------*/
 
-    semid_outils = semget(cles[0], 4 ,IPC_CREAT|0666);
+    semid_outils = semget(cle_mecanicien, 4 ,IPC_CREAT|0666);
     //pour le moment j'ai mis 4 semaphores pour le nb d'outils
     assert(semid_outils != -1);
 
-    semid_clients = semget(cles[1], nb_chefs ,IPC_CREAT|0666);
+    semid_clients = semget(cle_client, nb_chefs ,IPC_CREAT|0666);
     //pour le moment j'ai mis nb_chefs semaphores
     assert(semid_clients != -1);
 
@@ -141,6 +145,7 @@ int main(int argc, char const *argv[]){
 
     /*--------------Lancer les clients---------------*/
     /*
+    ATTENTION les clients ont besoin uniquement de la clé contenu dans cle_client
     int inconnu = 2; //on en lance combien ? :/
     //Ici il faut mettre un temporisation pour les creer
     char argv[cles.length()+1];
