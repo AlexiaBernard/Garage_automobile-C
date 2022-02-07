@@ -112,7 +112,7 @@ int main(int argc, char const *argv[]){
         assert(nb_envoi != -1);
 
         /* Attente du résultat du travail du mecanicien */
-        nb_lus = msgrcv(file_mess_ch_mecanicien,(void *) &rep_mecanicien, TAILLE_REPONSE_MECANICIEN, 2, 0);
+        nb_lus = msgrcv(file_mess_ch_mecanicien,(void *) &rep_mecanicien, TAILLE_REPONSE_MECANICIEN, numero_ordre+1, 0);
 
         assert(nb_lus != -1);
 

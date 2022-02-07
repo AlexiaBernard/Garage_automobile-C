@@ -101,10 +101,9 @@ int main(int argc, char const *argv[]){
         semop(semid,v,4);
         
         srand(time(NULL));
-        reponse.type = requete.chef;
+        reponse.type = requete.chef+1;
         reponse.resultat = rand()%100;
         reponse.client = requete.client;
-
 
         /* Envoi de la réponse */
         couleur(BLEU);
