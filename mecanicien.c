@@ -63,21 +63,19 @@ int main(int argc, char const *argv[]){
         fprintf(stdout,"\t Durée du travail : %d.\n", requete.duree);
         couleur(REINIT);
 
-        /* Réservation des outils */
-        int pnb_1 = -requete.nb_1;
-        int pnb_2 = -requete.nb_2;
-        int pnb_3 = -requete.nb_3;
-        int pnb_4 = -requete.nb_4;
-        int vnb_1 = requete.nb_1;
-        int vnb_2 = requete.nb_2;
-        int vnb_3 = requete.nb_3;
-        int vnb_4 = requete.nb_4;
 
-        struct sembuf p[] = { {0,pnb_1,0}, {1,pnb_2,0}, {2,pnb_3,0}, {3,pnb_4,0} };
-        struct sembuf v[] = { {0,vnb_1,0}, {1,vnb_2,0}, {2,vnb_3,0}, {3,vnb_4,0} };
+        /* Réservation des outils */
+
+        nb_1 = requete.nb_1;
+        nb_2 = requete.nb_2;
+        nb_3 = requete.nb_3;
+        nb_4 = requete.nb_4;
+
+        struct sembuf p[] = { {0,-nb_1,0}, {1,-nb_2,0}, {2,-nb_3,0}, {3,-nb_4,0} };
+        struct sembuf v[] = { {0,+nb_1,0}, {1,+nb_2,0}, {2,+nb_3,0}, {3,+nb_4,0} };
 
         /* Verrou des outils */
-        semop(semid,p,4);
+        assert(semop(semid,p,4) != -1);
 
         /* traitement de la requête */
         couleur(BLEU);

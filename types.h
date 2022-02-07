@@ -16,21 +16,21 @@ typedef struct {
 
 typedef struct {
 	long type;
-	int resultat; //pas sûre du type ici
+	int resultat;
 	pid_t client;
 } reponse_mecanicien;
 
 typedef struct {
 	long type;
-	int resultat; //pas sûre du type ici
+	int resultat;
 } reponse_chef;
 
 
 #define FICHIER_CLE "cle.chefs"
-#define TAILLE_REQUETE_CHEF sizeof(requete_chef)-sizeof(long int)
-#define TAILLE_REQUETE_CLIENT sizeof(requete_client)-sizeof(long int)
-#define TAILLE_REPONSE_MECANICIEN sizeof(reponse_mecanicien)-sizeof(long int)
-#define TAILLE_REPONSE_CHEF sizeof(reponse_chef)-sizeof(long int)
+#define TAILLE_REQUETE_CHEF sizeof(requete_chef)-sizeof(long)
+#define TAILLE_REQUETE_CLIENT sizeof(requete_client)-sizeof(long)
+#define TAILLE_REPONSE_MECANICIEN sizeof(reponse_mecanicien)-sizeof(long)
+#define TAILLE_REPONSE_CHEF sizeof(reponse_chef)-sizeof(long)
 
 /* Couleurs */
 #define couleur(param) fprintf(stdout,"\033[%sm",param)
