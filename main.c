@@ -66,10 +66,13 @@ int main(int argc, char const *argv[]){
     /*-----------Création des IPC nécessaire--------------*/
 
         /*------Calcul des clés-------*/
+
+    char arg_client = 'b';
+
     cle_mecanicien = ftok(FICHIER_CLE,'a');
     assert(cle_mecanicien != -1);
 
-    cle_client = ftok(FICHIER_CLE,'b');
+    cle_client = ftok(FICHIER_CLE,arg_client);
     assert(cle_client != -1);
 
         /*-----------La file de message--------------*/
@@ -104,25 +107,30 @@ int main(int argc, char const *argv[]){
     //ici initialisation d'un semaphore pour les clients
     //PROBLEME ASSERT FONCTIONNE PAS J ARRIVE PAS A TROUVER POURQUOI
     //assert(semctl(semid_clients,0,SETALL,0) >=0); //Initialise à 0 comme ca on pourra avoir le nb en attente
+    for (int i=0; i<nb_chefs; i++){
+        assert(semctl(semid_clients,i,SETVAL,0) >=0);
+    }
 
     //Pas sûre qu'il faut le mettre ici (j'ai pris exemple d'un truc du prof)
     assert(set_signal_handler(SIGINT,arret) == 0);
 
     /*------------Lancer les chefs d'ateliers-------------*/
+    char argv2[2];
+    char argv3[2];
+    char argv4[2];
+    char argv5[2];
+
+    snprintf(argv2, sizeof(int), "%d", nb_1);
+    snprintf(argv3, sizeof(int), "%d", nb_2);
+    snprintf(argv4, sizeof(int), "%d", nb_3);
+    snprintf(argv5, sizeof(int), "%d", nb_4);
+
 
     for(int i=0; i<nb_chefs; i++){
         
         char argv1[2];
-        char argv2[2];
-        char argv3[2];
-        char argv4[2];
-        char argv5[2];
-
         snprintf(argv1, sizeof(int), "%d", i);
-        snprintf(argv2, sizeof(int), "%d", nb_1);
-        snprintf(argv3, sizeof(int), "%d", nb_2);
-        snprintf(argv4, sizeof(int), "%d", nb_3);
-        snprintf(argv5, sizeof(int), "%d", nb_4);
+        
 
         p = fork();
         if(p==0){ //fils
@@ -139,7 +147,7 @@ int main(int argc, char const *argv[]){
         snprintf(argv1, sizeof(int), "%d", j);
         p = fork();
         if(p==0){ //fils
-            execl("./mecanicien", "./mecanicien",&argv1,NULL);
+            execl("./mecanicien", "./mecanicien",argv1,NULL);
             break;
         }
     }
@@ -153,22 +161,25 @@ int main(int argc, char const *argv[]){
     
     int duree;
     srand(time(NULL));
-    
+
+    //printf("clé client : %d\n",cle_client );
+    //printf("nb chef : %d\n",nb_chefs );
     int inconnu = 2; //pour l'instant on choisi et on pourra mettre un nombre aléatoire
-    char argv1[2];
-    snprintf(argv1, sizeof(int), "%d", nb_chefs);
+    char a1[2];
+    snprintf(a1, sizeof(int), "%d", nb_chefs);
+    //NE FONCTIONNE PAS --> envoie du char mis dans le ftok
+    //char a2[2];
+    //snprintf(a2, sizeof(key_t), "%d", cle_client);
 
     for(int i=0; i<inconnu; i++){
-        p = fork();
-        if(p==0){ //fils
-            execl("./client", "./client", argv1,cle_client,NULL);
+        //p = fork();
+        if(fork()==0){ //fils
+            execl("./client", "./client", a1, arg_client,NULL);
             break;
         }
         duree = rand()%10;
         sleep(duree);
-        printf("%s\n",argv1);
     }
-    
     exit(0);
 }
 

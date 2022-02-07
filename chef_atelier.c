@@ -45,7 +45,7 @@ int main(int argc, char const *argv[]){
     cle_mecanicien = ftok(FICHIER_CLE,'a');
     assert(cle_mecanicien != -1);
 
-    cle_client = ftok(FICHIER_CLE,'a');
+    cle_client = ftok(FICHIER_CLE,'b');
     assert(cle_client != -1);
     
         /*----------Récupération----------*/

@@ -3,7 +3,9 @@
 #include <sys/msg.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/types.h>
 #include <assert.h>
+#include <unistd.h>
 #include "types.h"
 
 int file_mess;
@@ -11,7 +13,7 @@ int semid;
 
 int main(int argc, char const *argv[]){
 
-    int nb_envoi,nb_recu,nb_lus;
+    int nb_envoi,nb_lus;
     requete_client requete;
     reponse_chef reponse;
 
@@ -22,12 +24,17 @@ int main(int argc, char const *argv[]){
         exit(1);
     }
 
-    int nb_chefs = (int)strtol(argv[1], NULL, 0);
-    key_t cle = (int)strtol(argv[2], NULL, 0);
+    int nb_chefs = (int) strtol(argv[1], NULL, 0);
+    //key_t cle = (key_t) strtol(argv[2], NULL, 0);
+    key_t cle ;
 
     couleur(ROUGE);
     fprintf(stdout, "Un client vient d'arriver au garage.\n");
     couleur(REINIT);
+
+    /*----------Calcul de la cle----------*/
+    cle = ftok(FICHIER_CLE,*argv[2]);
+    assert(cle != -1);
 
     /*--------------File de message--------------*/
     
