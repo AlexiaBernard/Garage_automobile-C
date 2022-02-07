@@ -5,23 +5,34 @@
 #include <sys/sem.h>
 #include <assert.h>
 #include <time.h>
+#include <signal.h> 
 #include "types.h"
 
-int file_mess;
+int file_mess_ch_mecanicien;
+int file_mess_mecanicien_ch;
 int semid;
+int sig=1;
 
 //DANS MECANICIEN CE QUIL MANQUE : 
 //Arrêt quand reception du SIGNINT
 //Verifier que le travail se termine avant de s'arrêter à la recpetion du signal
 
+void action(){
+    printf("Contrôle c mecanicien\n");
+    sig=2;
+}
+
 int main(int argc, char const *argv[]){
 
-    key_t cle ;
+    key_t cle_ch_mecanicien;
+    key_t cle_mecanicien_ch;
     int numero_ordre;
     ssize_t nb_lus, nb_envoi;
     requete_chef requete;
     reponse_mecanicien reponse;
     int nb_1, nb_2, nb_3, nb_4;
+
+    sig_t s1 = signal(SIGINT,action);
 
     /*------------Vérification des arguments---------------*/
 
@@ -39,27 +50,34 @@ int main(int argc, char const *argv[]){
     /*--------------File de message--------------*/
 
         /*----------Calcul de la cle----------*/
-    cle = ftok(FICHIER_CLE,'a');
-    assert(cle != -1);
+    cle_ch_mecanicien= ftok(FICHIER_CLE,'a');
+    assert(cle_ch_mecanicien!= -1);
+
+    cle_mecanicien_ch = ftok(FICHIER_CLE,'c');
+    assert(cle_mecanicien_ch != -1);
     
         /*----------Récupération----------*/
-    file_mess = msgget(cle,0);
-    assert(file_mess != -1);
+    file_mess_ch_mecanicien = msgget(cle_ch_mecanicien,0);
+    assert(file_mess_ch_mecanicien != -1);
+
+    file_mess_mecanicien_ch = msgget(cle_mecanicien_ch,0);
+    assert(file_mess_mecanicien_ch != -1);
 
     /*--------------Sémarphores--------------*/
-    semid = semget(cle,4,0);
+    semid = semget(cle_ch_mecanicien,4,0);
 	assert(semid >= 0);
 
     /*------Récupération des messages---------*/
 
-    while(1){
+    while(sig==1){
         /* mecanicien attend des requetes, de type numero_ordre :        */
-        nb_lus = msgrcv(file_mess,(void *) &requete, TAILLE_REQUETE_CHEF, 0, 0);
+        nb_lus = msgrcv(file_mess_ch_mecanicien,(void *) &requete, TAILLE_REQUETE_CHEF, 0, 0);
 
         assert(nb_lus != -1);
 
         couleur(BLEU);
         fprintf(stdout, "Le mécanicien n°%d vient de recevoir une requête du chef %d.\n", numero_ordre, requete.chef);
+        //fprintf(stdout,"coucou 1:%d 2:%d 3:%d 4:%d\n",requete.nb_1,requete.nb_2,requete.nb_3,requete.nb_4);
         fprintf(stdout,"\t Durée du travail : %d.\n", requete.duree);
         couleur(REINIT);
 
@@ -102,7 +120,7 @@ int main(int argc, char const *argv[]){
         fprintf(stdout, "Le mécanicien n°%d envoie le résultat de son travail au chef n°%d.\n",numero_ordre, requete.chef);
         fprintf(stdout, "\t Résultat : %d.\n",reponse.resultat);
         couleur(REINIT);
-        nb_envoi = msgsnd(file_mess, &reponse, TAILLE_REPONSE_MECANICIEN, 0);
+        nb_envoi = msgsnd(file_mess_mecanicien_ch, &reponse, TAILLE_REPONSE_MECANICIEN, 0);
 
         assert(nb_envoi != -1);
 

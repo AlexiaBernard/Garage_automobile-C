@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include "types.h"
 
-int file_mess;
+int file_mess_clients;
 int semid;
 
 int main(int argc, char const *argv[]){
@@ -33,8 +33,8 @@ int main(int argc, char const *argv[]){
     couleur(REINIT);
 
     /*----------File de message----------*/
-    file_mess = msgget(cle,0);
-    assert(file_mess != -1);
+    file_mess_clients = msgget(cle,0);
+    assert(file_mess_clients != -1);
 
     /*--------------Sémarphores--------------*/
     semid = semget(cle,nb_chefs,0);
@@ -58,11 +58,11 @@ int main(int argc, char const *argv[]){
     requete.type = num_chef;
     requete.client = pid;
 
-    nb_envoi = msgsnd(file_mess, &requete, TAILLE_REQUETE_CLIENT, 0);
+    nb_envoi = msgsnd(file_mess_clients, &requete, TAILLE_REQUETE_CLIENT, 0);
     assert(nb_envoi != -1);
 
     /* Le client attend la réponse du chef */
-    nb_lus = msgrcv(file_mess,(void *) &reponse, TAILLE_REPONSE_CHEF, pid, 0);
+    nb_lus = msgrcv(file_mess_clients,(void *) &reponse, TAILLE_REPONSE_CHEF, pid, 0);
     assert(nb_lus != -1);
 
     //afficher la requête et son résultat.

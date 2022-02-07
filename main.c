@@ -12,14 +12,16 @@
 #include <time.h>
 #include "types.h"
 
-int file_mess_mecanicien;
+int file_mess_ch_mecanicien;
+int file_mess_mecanicien_ch;
 int file_mess_clients; 
 int semid_outils;
 int semid_clients;
 
-void arret(int s){
+void arret(){
     /* Arret du serveur en detruisant la file de message */
-    assert(msgctl(file_mess_mecanicien, IPC_RMID, NULL) >= 0);
+    assert(msgctl(file_mess_ch_mecanicien, IPC_RMID, NULL) >= 0);
+    assert(msgctl(file_mess_mecanicien_ch, IPC_RMID, NULL) >= 0);
     assert(msgctl(file_mess_clients, IPC_RMID, NULL) >= 0);
     assert(semctl(semid_outils,0,IPC_RMID) >= 0);
     assert(semctl(semid_clients,0,IPC_RMID) >= 0);
@@ -37,7 +39,8 @@ int set_signal_handler(int signo, void (*handler)(int)) {
 int main(int argc, char const *argv[]){
     pid_t p ;
     key_t cle_client;
-    key_t cle_mecanicien;
+    key_t cle_ch_mecanicien;
+    key_t cle_mecanicien_ch;
 
     /*------------Vérification des arguments---------------*/
 
@@ -67,27 +70,33 @@ int main(int argc, char const *argv[]){
 
         /*------Calcul des clés-------*/
 
-    cle_mecanicien = ftok(FICHIER_CLE,'a');
-    assert(cle_mecanicien != -1);
+    cle_ch_mecanicien = ftok(FICHIER_CLE,'a');
+    assert(cle_ch_mecanicien != -1);
 
     cle_client = ftok(FICHIER_CLE,'b');
     assert(cle_client != -1);
+
+    cle_mecanicien_ch = ftok(FICHIER_CLE,'c');
+    assert(cle_mecanicien_ch != -1);
 
         /*-----------La file de message--------------*/
 
             /*------Création-------*/
 
-    file_mess_mecanicien = msgget(cle_mecanicien, IPC_CREAT|0666);
-    assert(file_mess_mecanicien != -1);
+    file_mess_ch_mecanicien = msgget(cle_ch_mecanicien, IPC_CREAT|0666);
+    assert(file_mess_ch_mecanicien != -1);
 
     file_mess_clients = msgget(cle_client, IPC_CREAT|0666);
     assert(file_mess_clients != -1);
+
+    file_mess_mecanicien_ch = msgget(cle_mecanicien_ch, IPC_CREAT|0666);
+    assert(file_mess_mecanicien_ch != -1);
 
         /*-----------Sémaphores--------------*/
 
                 /*------Création-------*/
 
-    semid_outils = semget(cle_mecanicien, 4 ,IPC_CREAT|0666);
+    semid_outils = semget(cle_ch_mecanicien, 4 ,IPC_CREAT|0666);
     //pour le moment j'ai mis 4 semaphores pour le nb d'outils
     assert(semid_outils != -1);
 
@@ -161,7 +170,7 @@ int main(int argc, char const *argv[]){
     
     int duree;
     srand(time(NULL));
-    int inconnu = 1; //pour l'instant on choisi et on pourra mettre un nombre aléatoire
+    int inconnu = 2; //pour l'instant on choisi et on pourra mettre un nombre aléatoire
     char a1[2];
     snprintf(a1, sizeof(a1), "%d", nb_chefs);
     char a2[200];
@@ -176,5 +185,6 @@ int main(int argc, char const *argv[]){
         duree = rand()%10;
         sleep(duree);
     }
+    arret();
     exit(0);
 }
