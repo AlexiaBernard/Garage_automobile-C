@@ -10,7 +10,6 @@
 
 int file_mess_client;
 int file_mess_ch_mecanicien;
-int file_mess_mecanicien_ch;
 int sig=1;
 
 void action(){
@@ -23,7 +22,6 @@ int main(int argc, char const *argv[]){
     int nb_1, nb_2, nb_3, nb_4;
     key_t cle_ch_mecanicien ;
     key_t cle_client ;
-    key_t cle_mecanicien_ch;
     int mecanicien;
     ssize_t nb_lus, nb_envoi;
     requete_client req_client;
@@ -58,9 +56,6 @@ int main(int argc, char const *argv[]){
 
     cle_client = ftok(FICHIER_CLE,'b');
     assert(cle_client != -1);
-
-    cle_mecanicien_ch = ftok(FICHIER_CLE,'c');
-    assert(cle_mecanicien_ch != -1);
     
         /*----------Récupération----------*/
     file_mess_ch_mecanicien = msgget(cle_ch_mecanicien,0);
@@ -68,9 +63,6 @@ int main(int argc, char const *argv[]){
 
     file_mess_client = msgget(cle_client,0);
     assert(file_mess_client != -1);
-
-    file_mess_mecanicien_ch = msgget(cle_mecanicien_ch,0);
-    assert(file_mess_mecanicien_ch != -1);
 
     /*------Récupération des messages---------*/
 
@@ -116,11 +108,11 @@ int main(int argc, char const *argv[]){
         couleur(JAUNE);
         fprintf(stdout, "Le chef d'atelier n°%d envoie le travail aux mécaniciens.\n",numero_ordre);
         couleur(REINIT);
-        nb_envoi = msgsnd(file_mess_ch_mecanicien, &req_chef, TAILLE_REQUETE_CHEF, 0);
+        nb_envoi = msgsnd(file_mess_ch_mecanicien, &req_chef, TAILLE_REQUETE_CHEF, 1);
         assert(nb_envoi != -1);
 
         /* Attente du résultat du travail du mecanicien */
-        nb_lus = msgrcv(file_mess_mecanicien_ch,(void *) &rep_mecanicien, TAILLE_REPONSE_MECANICIEN, numero_ordre, 0);
+        nb_lus = msgrcv(file_mess_ch_mecanicien,(void *) &rep_mecanicien, TAILLE_REPONSE_MECANICIEN, 2, 0);
 
         assert(nb_lus != -1);
 

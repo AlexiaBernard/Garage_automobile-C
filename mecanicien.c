@@ -9,7 +9,6 @@
 #include "types.h"
 
 int file_mess_ch_mecanicien;
-int file_mess_mecanicien_ch;
 int semid;
 int sig=1;
 
@@ -23,10 +22,8 @@ void action(){
 }
 
 int main(int argc, char const *argv[]){
-
-    key_t cle_ch_mecanicien;
-    key_t cle_mecanicien_ch;
     int numero_ordre;
+    key_t cle_ch_mecanicien;
     ssize_t nb_lus, nb_envoi;
     requete_chef requete;
     reponse_mecanicien reponse;
@@ -53,15 +50,9 @@ int main(int argc, char const *argv[]){
     cle_ch_mecanicien= ftok(FICHIER_CLE,'a');
     assert(cle_ch_mecanicien!= -1);
 
-    cle_mecanicien_ch = ftok(FICHIER_CLE,'c');
-    assert(cle_mecanicien_ch != -1);
-    
         /*----------Récupération----------*/
     file_mess_ch_mecanicien = msgget(cle_ch_mecanicien,0);
     assert(file_mess_ch_mecanicien != -1);
-
-    file_mess_mecanicien_ch = msgget(cle_mecanicien_ch,0);
-    assert(file_mess_mecanicien_ch != -1);
 
     /*--------------Sémarphores--------------*/
     semid = semget(cle_ch_mecanicien,4,0);
@@ -71,7 +62,7 @@ int main(int argc, char const *argv[]){
 
     while(sig==1){
         /* mecanicien attend des requetes, de type numero_ordre :        */
-        nb_lus = msgrcv(file_mess_ch_mecanicien,(void *) &requete, TAILLE_REQUETE_CHEF, 0, 0);
+        nb_lus = msgrcv(file_mess_ch_mecanicien,(void *) &requete, TAILLE_REQUETE_CHEF, 1, 0);
 
         assert(nb_lus != -1);
 
@@ -120,7 +111,7 @@ int main(int argc, char const *argv[]){
         fprintf(stdout, "Le mécanicien n°%d envoie le résultat de son travail au chef n°%d.\n",numero_ordre, requete.chef);
         fprintf(stdout, "\t Résultat : %d.\n",reponse.resultat);
         couleur(REINIT);
-        nb_envoi = msgsnd(file_mess_mecanicien_ch, &reponse, TAILLE_REPONSE_MECANICIEN, 0);
+        nb_envoi = msgsnd(file_mess_ch_mecanicien, &reponse, TAILLE_REPONSE_MECANICIEN, 2);
 
         assert(nb_envoi != -1);
 

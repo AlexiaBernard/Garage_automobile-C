@@ -13,7 +13,6 @@
 #include "types.h"
 
 int file_mess_ch_mecanicien;
-int file_mess_mecanicien_ch;
 int file_mess_clients; 
 int semid_outils;
 int semid_clients;
@@ -21,7 +20,6 @@ int semid_clients;
 void arret(){
     /* Arret du serveur en detruisant la file de message */
     assert(msgctl(file_mess_ch_mecanicien, IPC_RMID, NULL) >= 0);
-    assert(msgctl(file_mess_mecanicien_ch, IPC_RMID, NULL) >= 0);
     assert(msgctl(file_mess_clients, IPC_RMID, NULL) >= 0);
     assert(semctl(semid_outils,0,IPC_RMID) >= 0);
     assert(semctl(semid_clients,0,IPC_RMID) >= 0);
@@ -40,7 +38,6 @@ int main(int argc, char const *argv[]){
     pid_t p ;
     key_t cle_client;
     key_t cle_ch_mecanicien;
-    key_t cle_mecanicien_ch;
 
     /*------------Vérification des arguments---------------*/
 
@@ -76,9 +73,6 @@ int main(int argc, char const *argv[]){
     cle_client = ftok(FICHIER_CLE,'b');
     assert(cle_client != -1);
 
-    cle_mecanicien_ch = ftok(FICHIER_CLE,'c');
-    assert(cle_mecanicien_ch != -1);
-
         /*-----------La file de message--------------*/
 
             /*------Création-------*/
@@ -88,9 +82,6 @@ int main(int argc, char const *argv[]){
 
     file_mess_clients = msgget(cle_client, IPC_CREAT|0666);
     assert(file_mess_clients != -1);
-
-    file_mess_mecanicien_ch = msgget(cle_mecanicien_ch, IPC_CREAT|0666);
-    assert(file_mess_mecanicien_ch != -1);
 
         /*-----------Sémaphores--------------*/
 
