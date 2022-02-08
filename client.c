@@ -41,14 +41,22 @@ int main(int argc, char const *argv[]){
     assert(semid >= 0);
 
     //se mettre en attente du chef d'atelier le moins occupé (moyen à définir par vous)
-    //PROBLEME : Comment faire pour récupérer la "liste d'attente" (=la valeur d'un semaphore)
+    unsigned short int min;
+    unsigned short int val;
+    for(int i=0; i<nb_chefs; i++){
+        val = semctl(semid,i,GETVAL);
+        if (i==0){
+            min = val;
+        } else if(val<min) {
+            min = val;
+        }
+    }
     //Attention ! 0 n'est pas possible !
-    long int num_chef = 1; //revient au numéro du chef choisi
+    long int num_chef = (long int) min; 
 
-    //struct sembuf p[] = {{num_chef,-1,0}};
-    //struct sembuf v[] = {{num_chef,+1,0}};
+    struct sembuf p[] = {{num_chef-2,-1,0}};
 
-    //semop(semid,p,1);
+    semop(semid,p,1);
 
     /* Envoi du travail au chef d'atelier */
     couleur(BLANC);
@@ -70,8 +78,6 @@ int main(int argc, char const *argv[]){
     fprintf(stdout, "Le client n°%d a reçu le résultat du travail demandé.\n", pid);
     fprintf(stdout, "\t Résultat obtenu : %d.\n", reponse.resultat);
     couleur(REINIT);
-
-    //semop(semid,v,1);
 
     exit(0);
 

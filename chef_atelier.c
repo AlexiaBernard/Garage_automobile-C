@@ -10,6 +10,7 @@
 
 int file_mess_client;
 int file_mess_ch_mecanicien;
+int semid;
 int sig=1;
 
 void action(){
@@ -64,6 +65,12 @@ int main(int argc, char const *argv[]){
     file_mess_client = msgget(cle_client,0);
     assert(file_mess_client != -1);
 
+    /*--------------Sémarphores--------------*/
+    semid = semget(cle_client,0,0);
+    assert(semid >= 0);
+
+    struct sembuf v[] = {{numero_ordre-2,+1,0}};
+
     /*------Récupération des messages---------*/
 
     while(sig==1){
@@ -71,6 +78,8 @@ int main(int argc, char const *argv[]){
         nb_lus = msgrcv(file_mess_client,(void *) &req_client, TAILLE_REQUETE_CLIENT, numero_ordre, 0);
 
         assert(nb_lus != -1);
+
+        semop(semid,v,1);
 
         couleur(JAUNE);
         fprintf(stdout, "Le chef d'atelier n°%d vient de recevoir une requête du client %d.\n", numero_ordre, req_client.client);
