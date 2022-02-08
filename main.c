@@ -126,7 +126,7 @@ int main(int argc, char const *argv[]){
     snprintf(argv5, sizeof(argv5), "%d", nb_4);
 
 
-    for(int i=1; i<=nb_chefs; i++){
+    for(int i=2; i<nb_chefs+2; i++){
         
         char argv1[2];
         snprintf(argv1, sizeof(argv1), "%d", i);

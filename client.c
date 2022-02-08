@@ -41,18 +41,22 @@ int main(int argc, char const *argv[]){
     assert(semid >= 0);
 
     //se mettre en attente du chef d'atelier le moins occupé (moyen à définir par vous)
-    unsigned short int min;
+    long int num_chef;
+		unsigned short int min;
     unsigned short int val;
     for(int i=0; i<nb_chefs; i++){
         val = semctl(semid,i,GETVAL);
         if (i==0){
             min = val;
+						num_chef = i;
         } else if(val<min) {
             min = val;
+						num_chef = i;
         }
     }
+		printf("min=%d",min);
     //Attention ! 0 n'est pas possible !
-    long int num_chef = (long int) min; 
+    num_chef += 2; 
 
     struct sembuf p[] = {{num_chef-2,-1,0}};
 
