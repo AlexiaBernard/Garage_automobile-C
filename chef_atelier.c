@@ -14,7 +14,6 @@ int semid;
 int sig=1;
 
 void action(){
-    printf("Contrôle c chef\n");
     sig=2;
 }
 
@@ -23,7 +22,6 @@ int main(int argc, char const *argv[]){
     int nb_1, nb_2, nb_3, nb_4;
     key_t cle_ch_mecanicien ;
     key_t cle_client ;
-    int mecanicien;
     ssize_t nb_lus, nb_envoi;
     requete_client req_client;
     requete_chef req_chef;
@@ -144,8 +142,6 @@ int main(int argc, char const *argv[]){
 
     }
     exit(0);   
-
-
 }
 
     

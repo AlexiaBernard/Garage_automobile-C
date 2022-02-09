@@ -17,7 +17,6 @@ int sig=1;
 //Verifier que le travail se termine avant de s'arrêter à la recpetion du signal
 
 void action(){
-    printf("Contrôle c mecanicien\n");
     sig=2;
 }
 

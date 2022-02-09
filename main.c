@@ -7,6 +7,7 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <sys/sem.h>
+#include <sys/shm.h>
 #include <signal.h>
 #include <assert.h>
 #include <time.h>
@@ -16,6 +17,7 @@ int file_mess_ch_mecanicien;
 int file_mess_clients; 
 int semid_outils;
 int semid_clients;
+int shmid;
 
 void arret(){
     /* Arret du serveur en detruisant la file de message */
@@ -23,21 +25,15 @@ void arret(){
     assert(msgctl(file_mess_clients, IPC_RMID, NULL) >= 0);
     assert(semctl(semid_outils,0,IPC_RMID) >= 0);
     assert(semctl(semid_clients,0,IPC_RMID) >= 0);
-}
-
-//Fonction du prof pour arreter quand recoit message SIGINT
-int set_signal_handler(int signo, void (*handler)(int)) {
-	struct sigaction sa;
-	sa.sa_handler = handler;    // call `handler` on signal
-	sigemptyset(&sa.sa_mask);   // don't block other signals in handler
-	sa.sa_flags = 0 ;            //  don't restart system calls
-	return sigaction(signo, &sa, NULL);
+    assert(shmctl(shmid,IPC_RMID,0) >= 0);
 }
 
 int main(int argc, char const *argv[]){
     pid_t p ;
     key_t cle_client;
     key_t cle_ch_mecanicien;
+
+    sig_t s1 = signal(SIGINT,arret);
 
     /*------------Vérification des arguments---------------*/
 
@@ -106,13 +102,10 @@ int main(int argc, char const *argv[]){
     unsigned short *tab;
     tab = (unsigned short *) malloc(nb_chefs*sizeof(unsigned short));
     for(int i=0; i<nb_chefs; i++){
-        tab[i] = 0;
+        tab[i] = 1;
     }
 
     assert(semctl(semid_clients,0,SETALL,tab) >=0); //Initialise à 0 comme ca on pourra avoir le nb en attente
-
-    //Pas sûre qu'il faut le mettre ici (j'ai pris exemple d'un truc du prof)
-    assert(set_signal_handler(SIGINT,arret) == 0);
 
     /*------------Lancer les chefs d'ateliers-------------*/
     char argv2[2];
@@ -161,21 +154,31 @@ int main(int argc, char const *argv[]){
     
     int duree;
     srand(time(NULL));
-    int inconnu = 2; //pour l'instant on choisi et on pourra mettre un nombre aléatoire
     char a1[2];
     snprintf(a1, sizeof(a1), "%d", nb_chefs);
     char a2[200];
     snprintf(a2, sizeof(a2), "%d", cle_client);
 
-    for(int i=0; i<inconnu; i++){
+    shmid = shmget(cle_client,nb_chefs*sizeof(int),IPC_CREAT|0666);
+    assert(shmid >= 0);
+
+    int *file_attente;
+    file_attente = (int*) malloc(nb_chefs*sizeof(int));
+    for (int i=0; i<nb_chefs; i++){
+        file_attente[i] = 0;
+    }
+
+    
+
+    while(1){
         p = fork();
         if(p==0){ //fils
             execl("./client", "./client", a1, a2, NULL);
             break;
         }
-        duree = rand()%10;
+        duree = rand()%5;
         sleep(duree);
     }
-    arret();
+    
     exit(0);
 }
