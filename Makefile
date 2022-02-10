@@ -1,4 +1,4 @@
-CC = gcc -Wall 
+CC = gcc -Wall
 
 all : main client chef_atelier mecanicien
 
