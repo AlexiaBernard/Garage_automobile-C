@@ -12,10 +12,6 @@ int file_mess_ch_mecanicien;
 int semid;
 int sig=1;
 
-//DANS MECANICIEN CE QUIL MANQUE : 
-//Arrêt quand reception du SIGNINT
-//Verifier que le travail se termine avant de s'arrêter à la recpetion du signal
-
 void action(){
 	sig=2;
 }
@@ -28,7 +24,7 @@ int main(int argc, char const *argv[]){
 	reponse_mecanicien reponse;
 	int nb_1, nb_2, nb_3, nb_4;
 
-	sig_t s1 = signal(SIGINT,action);
+	signal(SIGINT,action);
 
 	/*------------Vérification des arguments---------------*/
 

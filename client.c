@@ -37,7 +37,7 @@ int main(int argc, char const *argv[]){
 	struct sembuf p_m[] = {{0,-1,0}};
 	struct sembuf v_m[] = {{0,+1,0}};
 
-	sig_t s1 = signal(SIGINT,action);
+	signal(SIGINT,action);
 
 	/*------------Vérification des arguments---------------*/
 

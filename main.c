@@ -26,7 +26,7 @@ key_t cle_mutex;
 int sig=1;
 
 void arret(){
-	printf("ARRET\n");
+	printf(" ARRET DE TOUT LES PROCESSUS\n");
 	sig=2;
 	assert(msgctl(file_mess_ch_mecanicien, IPC_RMID, NULL) >= 0);
 	assert(msgctl(file_mess_clients, IPC_RMID, NULL) >= 0);
@@ -67,7 +67,7 @@ void creationIPC(int nb_chefs, int nb_1, int nb_2, int nb_3, int nb_4){
 	semid_outils = semget(cle_ch_mecanicien, 4 ,IPC_CREAT|0666);
 	assert(semid_outils != -1);
 
-	semid_clients = semget(cle_client, nb_chefs ,IPC_CREAT|0666); //ici ajouter un semaphore pour z ?
+	semid_clients = semget(cle_client, nb_chefs ,IPC_CREAT|0666);
 	assert(semid_clients != -1);
 
 	semid_mutex = semget(cle_mutex, 1, IPC_CREAT|0666);
@@ -87,12 +87,12 @@ void creationIPC(int nb_chefs, int nb_1, int nb_2, int nb_3, int nb_4){
 		tab[i] = 1;
 	}
 
-	assert(semctl(semid_clients,0,SETALL,tab) >=0); //Initialise à 0 comme ca on pourra avoir le nb en attente
+	assert(semctl(semid_clients,0,SETALL,tab) >=0); //Initialise à 0 pour avoir le nb d'attente
 
 	//initialise mutex
 	assert(semctl(semid_mutex,0,SETVAL,1) >=0);
 
-	/*Memoire partagée*/
+	//Memoire partagée
 	shmid = shmget(cle_client,nb_chefs*sizeof(int),IPC_CREAT|0666);
 	assert(shmid >= 0);
 }
@@ -101,7 +101,7 @@ void creationIPC(int nb_chefs, int nb_1, int nb_2, int nb_3, int nb_4){
 int main(int argc, char const *argv[]){
 	pid_t p ;
 
-	sig_t s1 = signal(SIGINT,arret);
+	signal(SIGINT,arret);
 
 	/*------------Vérification des arguments---------------*/
 
@@ -142,7 +142,7 @@ int main(int argc, char const *argv[]){
 	snprintf(argv5, sizeof(argv5), "%d", nb_4);
 
 
-	for(int i=2; i<nb_chefs+2; i++){
+	for(int i=1; i<nb_chefs+1; i++){
 		
 		char argv1[2];
 		snprintf(argv1, sizeof(argv1), "%d", i);
@@ -171,10 +171,6 @@ int main(int argc, char const *argv[]){
 	sleep(1);
 
 	/*--------------Lancer les clients---------------*/
-	
-	//ATTENTION les clients ont besoin uniquement de la clé contenu dans cle_client
-	//Ici il faut mettre un temporisation pour les creer
-	
 	int duree;
 	srand(time(NULL));
 	char a1[2];
@@ -186,14 +182,11 @@ int main(int argc, char const *argv[]){
 	snprintf(a3, sizeof(a3), "%d", cle_mutex);
 
 	
-
 	int *file_attente;
 	file_attente = (int*) malloc(nb_chefs*sizeof(int));
 	for (int i=0; i<nb_chefs; i++){
 		file_attente[i] = 0;
 	}
-
-	
 
 	while(sig==1){
 		p = fork();

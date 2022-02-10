@@ -29,7 +29,7 @@ int main(int argc, char const *argv[]){
 	reponse_chef rep_chef;
 	reponse_mecanicien rep_mecanicien;
 
-	sig_t s1 = signal(SIGINT,action);
+	signal(SIGINT,action);
 
 	/*------------Vérification des arguments---------------*/
 	if (argc<5){
@@ -72,7 +72,7 @@ int main(int argc, char const *argv[]){
 	/*------Récupération des messages---------*/
 
 	while(1){
-		/* le chef d'atelier attend des requetes du client, de type numero_ordre :        */
+		//le chef d'atelier attend des requetes du client, de type numero_ordre
 		nb_lus = msgrcv(file_mess_client,(void *) &req_client, TAILLE_REQUETE_CLIENT, numero_ordre, 0);
 
 		if(sig==1){
