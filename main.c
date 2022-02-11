@@ -105,7 +105,7 @@ int main(int argc, char const *argv[]){
 
 	/*------------Vérification des arguments---------------*/
 
-	if (argc<6){
+	if (argc<7){
 		fprintf(stderr, "Attention, il faut 6 arguments : nb_chefs nb_mecaniciens nb_1 nb_2 nb_3 nb_4\n");
 		exit(-1);
 	}
@@ -142,7 +142,7 @@ int main(int argc, char const *argv[]){
 	snprintf(argv5, sizeof(argv5), "%d", nb_4);
 
 
-	for(int i=1; i<nb_chefs+1; i++){
+	for(int i=2; i<nb_chefs+2; i++){
 		
 		char argv1[2];
 		snprintf(argv1, sizeof(argv1), "%d", i);
