@@ -17,12 +17,12 @@ void action(){
 }
 
 int main(int argc, char const *argv[]){
-	int numero_ordre;
+	int numero_ordre, nb_1, nb_2, nb_3, nb_4;
 	key_t cle_ch_mecanicien;
 	ssize_t nb_lus, nb_envoi;
+
 	requete_chef requete;
 	reponse_mecanicien reponse;
-	int nb_1, nb_2, nb_3, nb_4;
 
 	signal(SIGINT,action);
 
@@ -68,9 +68,7 @@ int main(int argc, char const *argv[]){
 			fprintf(stdout,"\t Durée du travail : %d.\n", requete.duree);
 			couleur(REINIT);
 
-
 			/* Réservation des outils */
-
 			nb_1 = requete.nb_1;
 			nb_2 = requete.nb_2;
 			nb_3 = requete.nb_3;

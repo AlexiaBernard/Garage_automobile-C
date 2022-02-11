@@ -88,9 +88,7 @@ void creationIPC(int nb_chefs, int nb_1, int nb_2, int nb_3, int nb_4){
 	}
 
 	assert(semctl(semid_clients,0,SETALL,tab) >=0); //Initialise à 0 pour avoir le nb d'attente
-
-	//initialise mutex
-	assert(semctl(semid_mutex,0,SETVAL,1) >=0);
+	assert(semctl(semid_mutex,0,SETVAL,1) >=0); //initialise mutex
 
 	//Memoire partagée
 	shmid = shmget(cle_client,nb_chefs*sizeof(int),IPC_CREAT|0666);
@@ -100,7 +98,7 @@ void creationIPC(int nb_chefs, int nb_1, int nb_2, int nb_3, int nb_4){
 
 int main(int argc, char const *argv[]){
 	pid_t p ;
-
+	int i;
 	signal(SIGINT,arret);
 
 	/*------------Vérification des arguments---------------*/
@@ -142,11 +140,9 @@ int main(int argc, char const *argv[]){
 	snprintf(argv5, sizeof(argv5), "%d", nb_4);
 
 
-	for(int i=2; i<nb_chefs+2; i++){
-		
+	for(i=2; i<nb_chefs+2; i++){
 		char argv1[2];
 		snprintf(argv1, sizeof(argv1), "%d", i);
-		
 
 		p = fork();
 		if(p==0){ //fils
@@ -158,9 +154,9 @@ int main(int argc, char const *argv[]){
 	sleep(1);
 
 	/*--------------Lancer les mécaniciens---------------*/
-	for(int j=1; j<=nb_mecaniciens; j++){
+	for(i=1; i<=nb_mecaniciens; i++){
 		char argv1[2];
-		snprintf(argv1, sizeof(argv1), "%d", j);
+		snprintf(argv1, sizeof(argv1), "%d", i);
 		p = fork();
 		if(p==0){ //fils
 			execl("./mecanicien", "./mecanicien",argv1,NULL);
@@ -171,20 +167,19 @@ int main(int argc, char const *argv[]){
 	sleep(1);
 
 	/*--------------Lancer les clients---------------*/
-	int duree;
-	srand(time(NULL));
+	int duree,*file_attente;
 	char a1[2];
-	snprintf(a1, sizeof(a1), "%d", nb_chefs);
 	char a2[200];
-	snprintf(a2, sizeof(a2), "%d", cle_client);
-
 	char a3[200];
+
+	srand(time(NULL));
+	snprintf(a1, sizeof(a1), "%d", nb_chefs);
+	snprintf(a2, sizeof(a2), "%d", cle_client);
 	snprintf(a3, sizeof(a3), "%d", cle_mutex);
 
 	
-	int *file_attente;
 	file_attente = (int*) malloc(nb_chefs*sizeof(int));
-	for (int i=0; i<nb_chefs; i++){
+	for (i=0; i<nb_chefs; i++){
 		file_attente[i] = 0;
 	}
 

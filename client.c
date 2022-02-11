@@ -22,17 +22,15 @@ void action(){
 
 int main(int argc, char const *argv[]){
 
-	int nb_envoi, nb_lus, nb_chefs;
-	requete_client requete;
-	reponse_chef reponse;
+	int nb_envoi, nb_lus, nb_chefs, *file_attente,i;
 	pid_t pid = getpid();
 	key_t cle, cle_mutex;
-	int *file_attente;
-
 	long int num_chef;
 	unsigned short int min;
 	unsigned short int val;
 
+	requete_client requete;
+	reponse_chef reponse;
 
 	struct sembuf p_m[] = {{0,-1,0}};
 	struct sembuf v_m[] = {{0,+1,0}};
@@ -74,10 +72,9 @@ int main(int argc, char const *argv[]){
 
 
 	//Mise en attente du chef d'atelier ayant le moins dans la file d'attente
-	
 	semop(mutex,p_m,1);
 
-	for(int i=0; i<nb_chefs; i++){
+	for(i=0; i<nb_chefs; i++){
 		val = file_attente[i];
 		if (i==0){
 			min = val;

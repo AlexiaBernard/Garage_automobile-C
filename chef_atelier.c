@@ -23,6 +23,7 @@ int main(int argc, char const *argv[]){
 	key_t cle_ch_mecanicien ;
 	key_t cle_client ;
 	ssize_t nb_lus, nb_envoi;
+	
 	requete_client req_client;
 	requete_chef req_chef;
 
